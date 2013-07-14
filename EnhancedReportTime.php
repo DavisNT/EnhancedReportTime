@@ -33,11 +33,19 @@ $wgExtensionCredits[ 'other' ][] = array(
 
 $wgExtensionMessagesFiles['EnhancedReportTime'] = dirname( __FILE__ ) . '/EnhancedReportTime.i18n.php';
 
+/*** Default configuration ***/
+// Use request start timestamp from $_SERVER['REQUEST_TIME_FLOAT'] (when available).
 $wgERTUseServerStartTime = true;
+
+// Maximum allowed generation time for which to report that SLA is met.
 $wgERTSLATime = 10;
+
+// Array with page names (see magic word {{FULLPAGENAME}}) where to enable EnhancedReportTime (empty means everywhere).
 $wgERTPages = array('Special:Version');
+/*****************************/
 
 $wgHooks['SkinTemplateOutputPageBeforeExec'][] = 'wfEnhancedReportTimeOutputPageBeforeExec';
+
 function wfEnhancedReportTimeOutputPageBeforeExec($sk, &$tpl) {
     global $wgERTPages;
     if(count($wgERTPages)==0 || in_array($sk->getTitle()->getPrefixedText(), $wgERTPages, true)) {
