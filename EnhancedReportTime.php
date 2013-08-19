@@ -28,7 +28,7 @@ $wgExtensionCredits[ 'other' ][] = array(
     'author' => 'Davis Mosenkovs',
     'url' => 'https://www.mediawiki.org/wiki/Extension:EnhancedReportTime',
     'description' => 'Displays enhanced information about generation time of wiki pages',
-    'version' => '1.0.0',
+    'version' => '1.0.1',
 );
 
 $wgExtensionMessagesFiles['EnhancedReportTime'] = dirname( __FILE__ ) . '/EnhancedReportTime.i18n.php';
@@ -39,6 +39,9 @@ $wgERTUseServerStartTime = true;
 
 // Maximum allowed generation time for which to report that SLA is met.
 $wgERTSLATime = 10;
+
+// Name of PHP function with additional tests. This function must return true on success or string with error message on failure.
+$wgERTTestFunction = '';
 
 // Array with page names (see magic word {{FULLPAGENAME}}) where to enable EnhancedReportTime (empty means everywhere).
 $wgERTPages = array('Special:Version');
@@ -55,15 +58,20 @@ function wfEnhancedReportTimeOutputPageBeforeExec($sk, &$tpl) {
 }
 
 function wfEnhancedReportTimeReport() {
-    global $wgERTUseServerStartTime, $wgERTSLATime, $wgRequestTime, $wgShowHostnames;
+    global $wgERTUseServerStartTime, $wgERTSLATime, $wgERTTestFunction, $wgRequestTime, $wgShowHostnames;
 
     $starttime = $wgRequestTime;
     $stserver = false;
+    $testresult = true;
     $slamessage = '';
     
     if($wgERTUseServerStartTime && isset($_SERVER['REQUEST_TIME_FLOAT'])) {
         $starttime = $_SERVER['REQUEST_TIME_FLOAT'];
         $stserver = true;
+    }
+    
+    if($wgERTTestFunction != '') {
+        $testresult = $wgERTTestFunction();
     }
     
     $elapsed = microtime(true) - $starttime;
@@ -72,8 +80,8 @@ function wfEnhancedReportTimeReport() {
     }
 
     if($wgShowHostnames) {
-        return wfMessage('enhancedreporttime-text-host', round($elapsed, 3), $stserver ? 'REQUEST_TIME_FLOAT' : '$wgRequestTime', $slamessage, wfHostname())->text();
+        return wfMessage('enhancedreporttime-text-host', round($elapsed, 3), $stserver ? 'REQUEST_TIME_FLOAT' : '$wgRequestTime', $testresult===true ? $slamessage : ' '.$testresult, wfHostname())->text();
     } else {
-        return wfMessage('enhancedreporttime-text-nohost', round($elapsed, 3), $stserver ? 'REQUEST_TIME_FLOAT' : '$wgRequestTime', $slamessage)->text();
+        return wfMessage('enhancedreporttime-text-nohost', round($elapsed, 3), $stserver ? 'REQUEST_TIME_FLOAT' : '$wgRequestTime', $testresult===true ? $slamessage : ' '.$testresult)->text();
     }
 }
