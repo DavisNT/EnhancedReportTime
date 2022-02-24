@@ -1,7 +1,7 @@
 <?php
 /* EnhancedReportTime - MediaWiki extension to display enhanced information
  * about generation time of wiki pages.
- * Copyright (C) 2013 Davis Mosenkovs
+ * Copyright (C) 2013-2022 Davis Mosenkovs
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,7 +28,7 @@ $wgExtensionCredits[ 'other' ][] = array(
     'author' => 'Davis Mosenkovs',
     'url' => 'https://www.mediawiki.org/wiki/Extension:EnhancedReportTime',
     'description' => 'Displays enhanced information about generation time of wiki pages',
-    'version' => '1.0.1',
+    'version' => '1.1.0',
 );
 
 $wgExtensionMessagesFiles['EnhancedReportTime'] = dirname( __FILE__ ) . '/EnhancedReportTime.i18n.php';
