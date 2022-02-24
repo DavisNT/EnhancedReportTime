@@ -47,12 +47,12 @@ $wgERTTestFunction = '';
 $wgERTPages = array('Special:Version');
 /*****************************/
 
-$wgHooks['SkinTemplateOutputPageBeforeExec'][] = 'wfEnhancedReportTimeOutputPageBeforeExec';
+$wgHooks['AfterFinalPageOutput'][] = 'wfEnhancedReportTimeAfterFinalPageOutput';
 
-function wfEnhancedReportTimeOutputPageBeforeExec($sk, &$tpl) {
+function wfEnhancedReportTimeAfterFinalPageOutput($output) {
     global $wgERTPages;
-    if(count($wgERTPages)==0 || in_array($sk->getTitle()->getPrefixedText(), $wgERTPages, true)) {
-        $tpl->set('reporttime', wfEnhancedReportTimeReport());
+    if(count($wgERTPages)==0 || in_array($output->getTitle()->getPrefixedText(), $wgERTPages, true)) {
+        echo wfEnhancedReportTimeReport();
     }
     return true;
 }
